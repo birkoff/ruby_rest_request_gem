@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'rest_request'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2012-07-09'
   s.summary     = "Simple tool to create Rest Request and print the JSON response"
   s.description = "Simple tool to create Rest Request and print the JSON response"
