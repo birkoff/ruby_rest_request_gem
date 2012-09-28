@@ -110,4 +110,51 @@ class RestRequest
       i = i + 1
     end
   end
+
+ def self.beautify_json(data)
+    response = ""
+    level = 0
+    arr = data.split("")
+    i = 0
+    while (arr[i] != nil)
+      if(arr[i] == '{' || arr[i] == '[')
+        if(arr[i - 1] == ':')
+          response << arr[i]
+          level = level + 4
+          response << "\n" + " " * level
+        else
+          response << arr[i]
+          level = level + 4
+          response << "\n" + " " * level
+        end
+      elsif (arr[i] == '}' || arr[i] == ']')
+        if(arr[i+1] == ',')
+          response << "\n"
+          level = level - 4
+          response << " " * level
+          response << arr[i]
+          i = i + 1
+          response << arr[i]
+          response << "\n"
+          response << " " * level
+        else
+          response << "\n"
+          level = level - 4
+          response << " " * level
+          response << arr[i]
+          #print "\n"
+          #print " " * level
+        end
+      elsif (arr[i] == ',')
+        response << arr[i]
+        response << "\n"
+        response << " " * level
+      else
+        response << arr[i]
+      end
+      i = i + 1
+    end
+    return response
+  end
+ 
 end
