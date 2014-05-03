@@ -67,3 +67,4 @@ class RestRequest
   def self.clear_headers
     @@headers = nil
   end
+end
