@@ -23,6 +23,7 @@
 
 
 require 'rubygems'
+require 'json'
 require 'net/http'
 require 'uri'
 
@@ -31,20 +32,20 @@ class RestRequest
   def self.send_request(method, url, data = nil)
     url = URI.parse(url)
     case method
-    when "GET"
+    when 'GET'
       req = Net::HTTP::Get.new(url.path)
-    when "POST"
+    when 'POST'
       req = Net::HTTP::Post.new(url.path)
-    when "PUT"
+    when 'PUT'
       req = Net::HTTP::Put.new(url.path)
-    when "DELETE"
+    when 'DELETE'
       req = Net::HTTP::Delete.new(url.path)
     end
 
-    req.add_field "Accept", "application/json" 
+    req.add_field 'Accept', 'application/json'
     
-    if(defined? @headers) then
-      @headers.each {|key, value| req.add_field key, value }
+    if(defined? @@headers) then
+      @@headers.each {|key, value| req.add_field key, value }
     end
     
     if(defined? data) then
@@ -55,106 +56,14 @@ class RestRequest
       http.request(req)
     end
     
-    return res.body
+    response_body = JSON.parse(res.body)
   end
 
   def self.set_header(name, value)
-    unless defined? @headers : @headers = Hash.new end 
-    @headers[name] = value
+    unless defined? @@headers : @@headers = Hash.new end 
+    @@headers[name] = value
   end
   
   def self.clear_headers
-    @headers = nil
+    @@headers = nil
   end
- 
-  def self.print_json(data)
-    level = 0
-    arr = data.split("")
-    i = 0
-    while (arr[i] != nil)
-      if(arr[i] == '{' || arr[i] == '[')
-        if(arr[i - 1] == ':')
-          print arr[i]
-          level = level + 4
-          print "\n" + " " * level
-        else
-          print arr[i]
-          level = level + 4
-          print "\n" + " " * level
-        end
-      elsif (arr[i] == '}' || arr[i] == ']')
-        if(arr[i+1] == ',')
-          print "\n"
-          level = level - 4
-          print " " * level
-          print arr[i]
-          i = i + 1
-          print arr[i]
-          print "\n"
-          print " " * level
-        else
-          print "\n"
-          level = level - 4
-          print " " * level
-          print arr[i]
-          #print "\n"
-          #print " " * level
-        end
-      elsif (arr[i] == ',')
-        print arr[i]
-        print "\n"
-        print " " * level
-      else
-        print arr[i]
-      end
-      i = i + 1
-    end
-  end
-
- def self.beautify_json(data)
-    response = ""
-    level = 0
-    arr = data.split("")
-    i = 0
-    while (arr[i] != nil)
-      if(arr[i] == '{' || arr[i] == '[')
-        if(arr[i - 1] == ':')
-          response << arr[i]
-          level = level + 4
-          response << "\n" + " " * level
-        else
-          response << arr[i]
-          level = level + 4
-          response << "\n" + " " * level
-        end
-      elsif (arr[i] == '}' || arr[i] == ']')
-        if(arr[i+1] == ',')
-          response << "\n"
-          level = level - 4
-          response << " " * level
-          response << arr[i]
-          i = i + 1
-          response << arr[i]
-          response << "\n"
-          response << " " * level
-        else
-          response << "\n"
-          level = level - 4
-          response << " " * level
-          response << arr[i]
-          #print "\n"
-          #print " " * level
-        end
-      elsif (arr[i] == ',')
-        response << arr[i]
-        response << "\n"
-        response << " " * level
-      else
-        response << arr[i]
-      end
-      i = i + 1
-    end
-    return response
-  end
- 
-end
